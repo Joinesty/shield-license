@@ -16,17 +16,16 @@ type LicenseInfo struct {
 	Identifier  string
 	Username    string
 	CreatedDate time.Time
-	ValidDays   uint
+	ExpireDate  time.Time
 }
 
 func (l *LicenseInfo) IsExpired() bool {
-	expirationDate := l.CreatedDate.AddDate(0, 0, int(l.ValidDays))
-	return expirationDate.Before(getCurrentTime())
+	return l.ExpireDate.Before(getCurrentTime())
 }
 
 type CreateLicenseOpts struct {
 	Username   string
-	ValidDays  uint
+	ExpireDate time.Time
 	PrivateKey string
 }
 
@@ -54,8 +53,8 @@ func CreateLicense(opts CreateLicenseOpts) (string, error) {
 	licenseInfo := LicenseInfo{
 		Identifier:  uuid.NewString(),
 		Username:    opts.Username,
-		CreatedDate: time.Now(),
-		ValidDays:   opts.ValidDays,
+		CreatedDate: time.Now().UTC(),
+		ExpireDate:  opts.ExpireDate.UTC(),
 	}
 
 	licenseDocBytes, err := json.Marshal(licenseInfo)
