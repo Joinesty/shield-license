@@ -13,10 +13,13 @@ import (
 var getCurrentTime = time.Now
 
 type LicenseInfo struct {
-	Identifier  string
-	Username    string
-	CreatedDate time.Time
-	ExpireDate  time.Time
+	Identifier          string
+	Username            string
+	CreatedDate         time.Time
+	ExpireDate          time.Time
+	Expired             bool
+	NumberOfApps        int
+	NumberOfAPIRequests int
 }
 
 func (l *LicenseInfo) IsExpired() bool {
@@ -24,9 +27,11 @@ func (l *LicenseInfo) IsExpired() bool {
 }
 
 type CreateLicenseOpts struct {
-	Username   string
-	ExpireDate time.Time
-	PrivateKey string
+	Username            string
+	ExpireDate          time.Time
+	PrivateKey          string
+	NumberOfApps        int
+	NumberOfAPIRequests int
 }
 
 var validUsernameRegex = regexp.MustCompile("^[a-zA-Z0-9 ]{1,32}$")
@@ -51,10 +56,13 @@ func CreateLicense(opts CreateLicenseOpts) (string, error) {
 	}
 
 	licenseInfo := LicenseInfo{
-		Identifier:  uuid.NewString(),
-		Username:    opts.Username,
-		CreatedDate: time.Now().UTC(),
-		ExpireDate:  opts.ExpireDate.UTC(),
+		Identifier:          uuid.NewString(),
+		Username:            opts.Username,
+		CreatedDate:         time.Now().UTC(),
+		ExpireDate:          opts.ExpireDate.UTC(),
+		Expired:             false,
+		NumberOfApps:        -1,
+		NumberOfAPIRequests: -1,
 	}
 
 	licenseDocBytes, err := json.Marshal(licenseInfo)
