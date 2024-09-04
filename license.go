@@ -23,7 +23,9 @@ type LicenseInfo struct {
 }
 
 func (l *LicenseInfo) IsExpired() bool {
-	return l.ExpireDate.Before(getCurrentTime())
+	exp := l.ExpireDate.Before(getCurrentTime())
+	l.Expired = exp
+	return l.Expired
 }
 
 type CreateLicenseOpts struct {
